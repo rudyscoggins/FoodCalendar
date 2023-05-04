@@ -17,9 +17,7 @@ namespace FoodCalendar
     const string _breakfastGoogleDoc = "15t8XA64LZcfq1lJBoKXk8lDftIdY-igZH4gUMdqISoo";
     const string _lunchGoogleDoc = "1wPRm231CqlDjiAs41eGOizoE-bEVysDZYGN73hsiZ8g";
     const string _snackGoogleDoc = "1EDRtI5xoGEJc2lkaa3yKrWdGLgP_AfUtEbLLH9G38jo";
-    private const string _googleDriveClientId = "56482650599-6qtndved984b7u5lp2862ir3mc73n20l.apps.googleusercontent.com";
-    private const string _googleDriveSecret = "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";
-
+    
     static void Main(string[] args)
     {
       var breakfastFoods = GetItemsFromGoogleDoc(_breakfastGoogleDoc);
