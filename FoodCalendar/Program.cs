@@ -16,6 +16,7 @@ namespace FoodCalendar
 
     const string _breakfastGoogleDoc = "15t8XA64LZcfq1lJBoKXk8lDftIdY-igZH4gUMdqISoo";
     const string _lunchGoogleDoc = "1wPRm231CqlDjiAs41eGOizoE-bEVysDZYGN73hsiZ8g";
+    const string _snackGoogleDoc = "1EDRtI5xoGEJc2lkaa3yKrWdGLgP_AfUtEbLLH9G38jo";
     private const string _googleDriveClientId = "56482650599-6qtndved984b7u5lp2862ir3mc73n20l.apps.googleusercontent.com";
     private const string _googleDriveSecret = "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";
 
@@ -25,21 +26,15 @@ namespace FoodCalendar
 
       var lunchFoods = GetItemsFromGoogleDoc(_lunchGoogleDoc);
 
+      var snackFoods = GetItemsFromGoogleDoc(_snackGoogleDoc);
+
       string outputLocation = "../../../../../data/";
+            
+      if (!ValidateItems(breakfastFoods, nameof(breakfastFoods))) return;
+      if (!ValidateItems(lunchFoods, nameof(lunchFoods))) return;
+      if (!ValidateItems(snackFoods, nameof(snackFoods))) return;
 
-      // Read the breakfast foods from file      
-      if (breakfastFoods.Count == 0)
-      {
-        Console.WriteLine("No breakfast foods found.");
-        return;
-      }
 
-      // Read the lunch foods from file      
-      if (lunchFoods.Count == 0)
-      {
-        Console.WriteLine("No lunch foods found.");
-        return;
-      }
 
       // Create a calendar image
       int width = 700;
@@ -83,19 +78,22 @@ namespace FoodCalendar
         {
           int breakfastIndex = i % breakfastFoods.Count;
           int lunchIndex = i % lunchFoods.Count;
+          int snackIndex = i % snackFoods.Count;
 
           int row = (i + offset - 1) / 7 + 1;
           int col = (i + offset - 1) % 7;
 
           RectangleF dateRect = new RectangleF(col * cellWidth, row * cellHeight, cellWidth, cellHeight / 2);
-          RectangleF breakfastRect = new RectangleF(col * cellWidth, row * cellHeight + cellHeight / 2, cellWidth, cellHeight / 4);
-          RectangleF lunchRect = new RectangleF(col * cellWidth, row * cellHeight + cellHeight / 4 * 3, cellWidth, cellHeight / 4);
+          RectangleF breakfastRect = new RectangleF(col * cellWidth, row * cellHeight + cellHeight / 3, cellWidth, cellHeight / 4);
+          RectangleF lunchRect = new RectangleF(col * cellWidth, row * cellHeight + cellHeight / 4 * 2 + 5, cellWidth, cellHeight / 4);
+          RectangleF snackRect = new RectangleF(col * cellWidth, row * cellHeight + cellHeight / 4 * 3, cellWidth, cellHeight / 4);
 
           // Draw the day cell with a black border
           graphics.DrawRectangle(Pens.Black, col * cellWidth, row * cellHeight, cellWidth, cellHeight);
           graphics.DrawString(i.ToString(), dateFont, Brushes.Black, dateRect, format);
           graphics.DrawString(breakfastFoods[breakfastIndex], foodFont, Brushes.Black, breakfastRect, format);
           graphics.DrawString(lunchFoods[lunchIndex], foodFont, Brushes.Black, lunchRect, format);
+          graphics.DrawString(snackFoods[snackIndex], foodFont, Brushes.Black, snackRect, format);
         }
       }
 
@@ -104,6 +102,17 @@ namespace FoodCalendar
       calendar.Save($"{outputLocation}food_calendar.jpg", ImageFormat.Jpeg);
 
       Console.WriteLine($"Calendar saved to {System.IO.Path.GetFullPath(outputLocation)}food_calendar.jpg.");
+    }
+
+    private static bool ValidateItems(List<string> foodList, string foodName)
+    {
+      if (foodList.Count == 0)
+      {
+        Console.WriteLine($"No {foodName} found.");
+        return false;
+      }
+
+      return true;
     }
 
     private static List<string> GetItemsFromGoogleDoc(string fileId)
