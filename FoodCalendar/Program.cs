@@ -38,7 +38,7 @@ namespace FoodCalendar
       // Create a calendar image
       int width = 700;
       int height = 1000;
-      Bitmap calendar = new Bitmap(width, height);
+      Bitmap calendar = new Bitmap(width+5, height);
 
 
 
