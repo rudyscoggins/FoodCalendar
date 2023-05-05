@@ -48,13 +48,13 @@ namespace FoodCalendar
         graphics.Clear(Color.White);
 
         // Set up the fonts and formatting
-        Font dateFont = new Font("Arial", 24);
+        Font dateFont = new Font("Arial", 20);
         Font foodFont = new Font("Arial", 10);
         Font headerFont = new Font("Arial", 14, FontStyle.Bold);
         StringFormat format = new StringFormat();
         format.Alignment = StringAlignment.Center;
         format.LineAlignment = StringAlignment.Center;
-
+        
         //DateTime today = DateTime.Today.AddMonths(1);
         DateTime today = DateTime.Today;
         graphics.DrawString(today.ToString("MMMM yyyy"), headerFont, Brushes.Black, new Rectangle(0, 0, 200, 100), format);
@@ -82,16 +82,17 @@ namespace FoodCalendar
           int row = (i + offset - 1) / 7 + 1;
           int col = (i + offset - 1) % 7;
 
-          RectangleF dateRect = new RectangleF(col * cellWidth, row * cellHeight, cellWidth, cellHeight / 2);
+          RectangleF dateRect = new RectangleF(col * cellWidth, row * cellHeight - 5, cellWidth, cellHeight / 2);
           RectangleF breakfastRect = new RectangleF(col * cellWidth, row * cellHeight + cellHeight / 3, cellWidth, cellHeight / 4);
           RectangleF lunchRect = new RectangleF(col * cellWidth, row * cellHeight + cellHeight / 4 * 2 + 5, cellWidth, cellHeight / 4);
-          RectangleF snackRect = new RectangleF(col * cellWidth, row * cellHeight + cellHeight / 4 * 3, cellWidth, cellHeight / 4);
+          RectangleF snackRect = new RectangleF(col * cellWidth, row * cellHeight + cellHeight / 4 * 3 + 5, cellWidth, cellHeight / 4);
 
           // Draw the day cell with a black border
+          graphics.FillRectangle(Brushes.LightGray, lunchRect);
           graphics.DrawRectangle(Pens.Black, col * cellWidth, row * cellHeight, cellWidth, cellHeight);
           graphics.DrawString(i.ToString(), dateFont, Brushes.Black, dateRect, format);
           graphics.DrawString(breakfastFoods[breakfastIndex], foodFont, Brushes.Black, breakfastRect, format);
-          graphics.DrawString(lunchFoods[lunchIndex], foodFont, Brushes.Black, lunchRect, format);
+          graphics.DrawString(lunchFoods[lunchIndex], foodFont, Brushes.Black, lunchRect, format);          
           graphics.DrawString(snackFoods[snackIndex], foodFont, Brushes.Black, snackRect, format);
         }
       }
