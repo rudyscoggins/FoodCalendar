@@ -1,6 +1,7 @@
 ﻿using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -16,8 +17,9 @@ namespace FoodCalendar
 
     const string _breakfastGoogleDoc = "15t8XA64LZcfq1lJBoKXk8lDftIdY-igZH4gUMdqISoo";
     const string _lunchGoogleDoc = "1wPRm231CqlDjiAs41eGOizoE-bEVysDZYGN73hsiZ8g";
-    const string _snackGoogleDoc = "1EDRtI5xoGEJc2lkaa3yKrWdGLgP_AfUtEbLLH9G38jo";
-    
+    const string _snackGoogleDoc = "1EDRtI5xoGEJc2lkaa3yKrWdGLgP_AfUtEbLLH9G38jo";    
+    private static readonly string dataLocation = "../../../../../data/";
+
     static void Main(string[] args)
     {
       var breakfastFoods = GetItemsFromGoogleDoc(_breakfastGoogleDoc);
@@ -26,8 +28,7 @@ namespace FoodCalendar
 
       var snackFoods = GetItemsFromGoogleDoc(_snackGoogleDoc);
 
-      string outputLocation = "../../../../../data/";
-            
+      
       if (!ValidateItems(breakfastFoods, nameof(breakfastFoods))) return;
       if (!ValidateItems(lunchFoods, nameof(lunchFoods))) return;
       if (!ValidateItems(snackFoods, nameof(snackFoods))) return;
@@ -97,9 +98,9 @@ namespace FoodCalendar
 
 
       // Save the calendar image as a JPEG file
-      calendar.Save($"{outputLocation}food_calendar.jpg", ImageFormat.Jpeg);
+      calendar.Save($"{dataLocation}food_calendar.jpg", ImageFormat.Jpeg);
 
-      Console.WriteLine($"Calendar saved to {System.IO.Path.GetFullPath(outputLocation)}food_calendar.jpg.");
+      Console.WriteLine($"Calendar saved to {System.IO.Path.GetFullPath(dataLocation)}food_calendar.jpg.");
     }
 
     private static bool ValidateItems(List<string> foodList, string foodName)
@@ -115,6 +116,14 @@ namespace FoodCalendar
 
     private static List<string> GetItemsFromGoogleDoc(string fileId)
     {
+      string json = System.IO.File.ReadAllText(@$"{dataLocation}credentials.json");
+
+      // Parse the JSON string into a JObject
+      JObject obj = JObject.Parse(json);
+            
+      string clientId = (string)obj["clientId"];
+      string secret = (string)obj["secret"];
+           
       // Set the scope to read-only access to Google Drive
       string[] scopes = { DriveService.Scope.DriveReadonly };
 
@@ -122,8 +131,8 @@ namespace FoodCalendar
       UserCredential credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
           new ClientSecrets
           {
-            ClientId = _googleDriveClientId,
-            ClientSecret = _googleDriveSecret
+            ClientId = clientId,
+            ClientSecret = secret
           },
           scopes,
           "user",
